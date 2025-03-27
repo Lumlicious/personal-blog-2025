@@ -1,56 +1,43 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import { getAllPublished } from "@/lib/notion/client";
+import { Metadata } from "next";
 
-export default function BlogPage() {
-  const posts = [
-    {
-      id: 1,
-      title: "Getting Started with Next.js",
-      description: "Learn the basics of Next.js and how to build modern web applications.",
-      date: "2024-03-20",
-      readTime: "5 min read",
-    },
-    {
-      id: 2,
-      title: "Understanding TypeScript",
-      description: "A comprehensive guide to TypeScript and its benefits in modern development.",
-      date: "2024-03-18",
-      readTime: "7 min read",
-    },
-    {
-      id: 3,
-      title: "The Future of Web Development",
-      description: "Exploring upcoming trends and technologies in web development.",
-      date: "2024-03-15",
-      readTime: "6 min read",
-    },
-  ];
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Read my latest thoughts and tutorials on web development.",
+};
+
+export const revalidate = 3600; // Revalidate every hour
+
+export default async function BlogPage() {
+  const posts = await getAllPublished();
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-3xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Blog Posts</h1>
-        <p className="text-gray-600 mt-2">Thoughts, tutorials, and insights about technology.</p>
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Blog</h1>
+        <p className="leading-7 [&:not(:first-child)]:mt-6 text-muted-foreground">
+          Read my latest thoughts and tutorials on web development.
+        </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8">
         {posts.map((post) => (
-          <Link href={`/blog/${post.id}`} key={post.id}>
-            <Card className="h-full hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle>{post.title}</CardTitle>
-                <CardDescription>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span>{post.date}</span>
-                    <span>•</span>
-                    <span>{post.readTime}</span>
-                  </div>
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">{post.description}</p>
-              </CardContent>
-            </Card>
+          <Link
+            key={post.slug}
+            href={`/blog/${post.slug}`}
+            className="group block space-y-2"
+          >
+            <h2 className="text-2xl font-semibold tracking-tight group-hover:underline">
+              {post.title}
+            </h2>
+            <p className="text-muted-foreground leading-7">{post.description}</p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{post.date}</span>
+              <span>•</span>
+              <span>{post.wordCount} words</span>
+            </div>
           </Link>
         ))}
       </div>
