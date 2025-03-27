@@ -1,7 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 import { getAllPublished } from "@/lib/notion/client";
+import Link from "next/link";
 import { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -27,16 +27,32 @@ export default async function BlogPage() {
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="group block space-y-2"
+            className="group flex gap-6 items-start h-48"
           >
-            <h2 className="text-2xl font-semibold tracking-tight group-hover:underline">
-              {post.title}
-            </h2>
-            <p className="text-muted-foreground leading-7">{post.description}</p>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{post.date}</span>
-              <span>•</span>
-              <span>{post.wordCount} words</span>
+            {post.cover && (
+              <div className="relative h-full w-48 flex-shrink-0 overflow-hidden rounded-lg">
+                <Image
+                  src={post.cover}
+                  alt={post.title}
+                  fill
+                  className="object-cover transition-transform group-hover:scale-105"
+                  sizes="(max-width: 768px) 192px, 192px"
+                  priority={false}
+                />
+              </div>
+            )}
+            <div className="space-y-2 flex-1 min-w-0">
+              <h2 className="text-2xl font-semibold tracking-tight group-hover:underline truncate">
+                {post.title}
+              </h2>
+              <p className="text-muted-foreground leading-7 line-clamp-3">
+                {post.description}
+              </p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>{post.date}</span>
+                <span>•</span>
+                <span>{post.wordCount} words</span>
+              </div>
             </div>
           </Link>
         ))}

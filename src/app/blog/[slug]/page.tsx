@@ -10,8 +10,9 @@ interface BlogPostPageProps {
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const slug = await params.slug;
   try {
-    const post = await getSingleBlogPostBySlug(params.slug);
+    const post = await getSingleBlogPostBySlug(slug);
     return {
       title: post.title,
       description: post.description,
@@ -34,8 +35,9 @@ export async function generateStaticParams() {
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const slug = await params.slug;
   try {
-    const post = await getSingleBlogPostBySlug(params.slug);
+    const post = await getSingleBlogPostBySlug(slug);
 
     return (
       <article className="max-w-3xl mx-auto space-y-8">
